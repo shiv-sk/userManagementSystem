@@ -1,7 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserRegisterDto } from './dto/register-user.dto';
 import { UserService } from 'src/user/user.service';
-import { UserLoginDto } from './dto/login-user.dto';
 import { comparePassword, encryptPassword } from './utils/handlePassword';
 import { User } from './interface/user.interface';
 import { JwtService } from '@nestjs/jwt';
@@ -24,17 +27,14 @@ export class AuthService {
     return newUser;
   }
 
-  async validateUser(userLoginDto: UserLoginDto) {
-    const user = await this.userService.findUserByEmail(userLoginDto.email);
+  async validateUser(email: string, password: string) {
+    const user = await this.userService.findUserByEmail(email);
     if (!user) {
-      throw new BadRequestException('Invalid email!');
+      throw new UnauthorizedException('Invalid credentials');
     }
-    const isCorrectPassword = await comparePassword(
-      userLoginDto.password,
-      user.password,
-    );
+    const isCorrectPassword = await comparePassword(password, user.password);
     if (!isCorrectPassword) {
-      throw new BadRequestException('Invalid password!');
+      throw new UnauthorizedException('Invalid credentials');
     }
     const foundUser = {
       id: user._id.toString(),
