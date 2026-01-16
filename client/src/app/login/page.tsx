@@ -18,12 +18,7 @@ export default function LoginPage(){
         e.preventDefault();
         const response = await loginUser(form);
         if(response.success && response.data){
-            if(response.data.role === "JobSeeker"){
-                router.push("/");
-            }
-            else{
-                router.push("/jobs");
-            }
+            router.push("/");
         }else{
             alert(response.error || "Internal Server Error");
         }

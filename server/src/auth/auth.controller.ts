@@ -40,7 +40,7 @@ export class AuthController {
       secure: true,
       sameSite: 'none',
     });
-    return { access_token };
+    return { access_token, user: req.user };
   }
 
   @UseGuards(JwtAuthGuard, RolesGuard)

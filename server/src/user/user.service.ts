@@ -43,7 +43,9 @@ export class UserService {
   }
 
   async findAllUsers() {
-    const user = await this.userModel.find();
+    const user = await this.userModel
+      .find()
+      .select('-password -createdAt -updatedAt -__v');
     if (!user) {
       throw new NotFoundException('user not found!');
     }
